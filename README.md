@@ -109,7 +109,7 @@ After initializing the database, a default manager account is created:
 ## Project Structure
 
 ```
-finalproject/
+bookstoreapp/
 ├── backend/
 │   ├── app.py              # Flask application and API endpoints
 │   ├── models.py           # Database models
