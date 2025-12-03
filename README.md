@@ -30,17 +30,38 @@ A desktop application for an online bookstore with a Flask REST API backend and 
 - Python 3.8 or higher
 - MySQL Server
 - pip (Python package manager)
+- Python virtual environment support (usually included with Python 3.3+)
+- Tkinter (for GUI client)
+  - Ubuntu/Debian: `sudo apt-get install python3-tk`
+  - CentOS/RHEL: `sudo yum install tkinter` or `sudo dnf install python3-tkinter`
+  - Windows/macOS: Usually pre-installed with Python
 
 ### Installation
 
 1. **Clone or navigate to the project directory**
 
-2. **Install Python dependencies**
+2. **Create and activate a Python virtual environment**
    ```bash
+   # Create virtual environment
+   python3 -m venv venv
+   
+   # Activate virtual environment
+   # On Linux/macOS:
+   source venv/bin/activate
+   
+   # On Windows:
+   # venv\Scripts\activate
+   ```
+   
+   Your terminal prompt should show `(venv)` when the virtual environment is active.
+
+3. **Install Python dependencies**
+   ```bash
+   # Make sure your virtual environment is activated first
    pip install -r requirements.txt
    ```
 
-3. **Set up MySQL Database**
+4. **Set up MySQL Database**
    - Start your MySQL server
    - Create a database named `bookstore`:
      ```sql
@@ -48,7 +69,7 @@ A desktop application for an online bookstore with a Flask REST API backend and 
      ```
 
 4. **Configure Environment Variables**
-   - Copy `.env.example` to `.env`
+   - Create `.env` using `.env.example` as a template
    - Update the values in `.env` with your configuration:
      - Database credentials
      - SMTP email settings (for Gmail, use an App Password)
@@ -56,18 +77,24 @@ A desktop application for an online bookstore with a Flask REST API backend and 
 
 5. **Initialize the Database**
    ```bash
+   # Make sure your virtual environment is activated
    python backend/init_db.py
    ```
 
 6. **Run the Flask Backend**
    ```bash
+   # Make sure your virtual environment is activated
    python backend/app.py
    ```
    The API will be available at `http://localhost:5000`
 
 7. **Run the Desktop Client**
-   Open a new terminal and run:
+   Open a new terminal, activate your virtual environment, and run:
    ```bash
+   # Activate virtual environment first
+   source venv/bin/activate
+   
+   # Then run the client
    python client/main.py
    ```
 
