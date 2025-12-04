@@ -31,7 +31,7 @@ A desktop application for an online bookstore with a Flask REST API backend and 
 - MySQL Server
 - pip (Python package manager)
 - Python virtual environment support (usually included with Python 3.3+)
-- Tkinter (for GUI client)
+- Python Tkinter (for GUI client)
   - Ubuntu/Debian: `sudo apt-get install python3-tk`
   - Windows/macOS: Usually pre-installed with Python
 
