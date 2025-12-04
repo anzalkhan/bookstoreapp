@@ -257,6 +257,15 @@ def create_order():
             db.session.rollback()
             return jsonify({'error': 'Transaction type must be "buy" or "rent"'}), 400
         
+        # Check if book is available for the requested transaction type
+        if transaction_type == 'buy' and not book.available_for_purchase:
+            db.session.rollback()
+            return jsonify({'error': f'{book.title} is not available for purchase'}), 400
+        
+        if transaction_type == 'rent' and not book.available_for_rent:
+            db.session.rollback()
+            return jsonify({'error': f'{book.title} is not available for rent'}), 400
+        
         price = book.buy_price if transaction_type == 'buy' else book.rent_price
         total_amount += price
         

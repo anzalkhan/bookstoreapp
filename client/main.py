@@ -20,6 +20,9 @@ class BookstoreApp:
         # Cart for storing selected books
         self.cart = []
         
+        # Store books data for availability checking
+        self.books_data = {}
+        
         # Show login screen
         self.show_login_screen()
     
@@ -204,11 +207,21 @@ class BookstoreApp:
                 for item in self.books_tree.get_children():
                     self.books_tree.delete(item)
                 
+                # Store books data for availability checking
+                self.books_data = {book['id']: book for book in books}
+                
                 # Add books to treeview
                 for book in books:
+                    availability_status = []
+                    if not book['available_for_purchase']:
+                        availability_status.append('No Buy')
+                    if not book['available_for_rent']:
+                        availability_status.append('No Rent')
+                    status_text = f" [{', '.join(availability_status)}]" if availability_status else ""
+                    
                     self.books_tree.insert('', 'end', values=(
                         book['id'],
-                        book['title'],
+                        book['title'] + status_text,
                         book['author'],
                         f"${book['buy_price']:.2f}",
                         f"${book['rent_price']:.2f}"
@@ -231,6 +244,16 @@ class BookstoreApp:
             title = values[1]
             author = values[2]
             
+            # Check availability
+            if book_id in self.books_data:
+                book = self.books_data[book_id]
+                if transaction_type == 'buy' and not book['available_for_purchase']:
+                    messagebox.showwarning("Not Available", f"{book['title']} is not available for purchase")
+                    return
+                if transaction_type == 'rent' and not book['available_for_rent']:
+                    messagebox.showwarning("Not Available", f"{book['title']} is not available for rent")
+                    return
+            
             # Check if already in cart
             for cart_item in self.cart:
                 if cart_item['book_id'] == book_id and cart_item['transaction_type'] == transaction_type:
@@ -245,12 +268,16 @@ class BookstoreApp:
             })
         
         messagebox.showinfo("Success", f"Added to cart ({transaction_type})")
-        # Update cart button text
+        self.update_cart_button()
+    
+    def update_cart_button(self):
+        """Update the cart button text with current cart count"""
         for widget in self.root.winfo_children():
             if isinstance(widget, ttk.Frame):
                 for child in widget.winfo_children():
                     if isinstance(child, ttk.Button) and "View Cart" in child['text']:
                         child.config(text=f"View Cart ({len(self.cart)})")
+                        break
     
     def show_cart(self):
         """Display shopping cart"""
@@ -312,12 +339,14 @@ class BookstoreApp:
                 break
         
         tree.delete(selection[0])
+        self.update_cart_button()
         messagebox.showinfo("Success", "Item removed from cart")
     
     def clear_cart(self, window):
         """Clear all items from cart"""
         if messagebox.askyesno("Confirm", "Clear all items from cart?"):
             self.cart = []
+            self.update_cart_button()
             window.destroy()
             messagebox.showinfo("Success", "Cart cleared")
     
@@ -344,6 +373,7 @@ class BookstoreApp:
                     f"Total: ${order_data['total_amount']:.2f}\n"
                     f"A bill has been sent to your email.")
                 self.cart = []
+                self.update_cart_button()
                 window.destroy()
             else:
                 messagebox.showerror("Error", response.json().get('error', 'Order failed'))
@@ -671,11 +701,11 @@ class BookstoreApp:
         rent_price_entry.grid(row=3, column=1, padx=10, pady=5)
         
         ttk.Label(dialog, text="Available for Purchase:").grid(row=4, column=0, padx=10, pady=5, sticky='w')
-        available_buy = tk.BooleanVar(value=values[5] == 'Yes')
+        available_buy = tk.BooleanVar(value=(str(values[5]) == 'Yes'))
         ttk.Checkbutton(dialog, variable=available_buy).grid(row=4, column=1, padx=10, pady=5, sticky='w')
         
         ttk.Label(dialog, text="Available for Rent:").grid(row=5, column=0, padx=10, pady=5, sticky='w')
-        available_rent = tk.BooleanVar(value=values[6] == 'Yes')
+        available_rent = tk.BooleanVar(value=(str(values[6]) == 'Yes'))
         ttk.Checkbutton(dialog, variable=available_rent).grid(row=5, column=1, padx=10, pady=5, sticky='w')
         
         def submit():
