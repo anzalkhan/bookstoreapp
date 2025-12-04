@@ -33,7 +33,6 @@ A desktop application for an online bookstore with a Flask REST API backend and 
 - Python virtual environment support (usually included with Python 3.3+)
 - Tkinter (for GUI client)
   - Ubuntu/Debian: `sudo apt-get install python3-tk`
-  - CentOS/RHEL: `sudo yum install tkinter` or `sudo dnf install python3-tkinter`
   - Windows/macOS: Usually pre-installed with Python
 
 ### Installation
